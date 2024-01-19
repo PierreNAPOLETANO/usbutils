@@ -90,20 +90,14 @@ def parse_usb_ids():
 			continue
 		if ln[0] == '\t' and ishexdigit(ln[1:3]):
 			# usb.ids has a device id of 01xy, sigh
-			if ln[3:5] == "xy":
-				did = int(ln[1:3], 16)*256
-			else:
-				did = int(ln[1:5], 16)
+			did = int(ln[1:3], 16)*256 if ln[3:5] == "xy" else int(ln[1:5], 16)
 			# USB devices
 			if mode == modes.Vendor:
 				usbproducts[vid, did] = ln[7:]
 				continue
 			elif mode == modes.Class:
 				nm = ln[5:]
-				if nm != "Unused":
-					strg = cstrg + ":" + nm
-				else:
-					strg = cstrg + ":"
+				strg = f"{cstrg}:{nm}" if nm != "Unused" else f"{cstrg}:"
 				usbclasses[vid, did, -1] = strg
 				continue
 		if ln[0] == 'C':
